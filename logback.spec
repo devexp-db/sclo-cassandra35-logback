@@ -3,7 +3,7 @@
 
 Name:           logback
 Version:        1.1.3
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        A Java logging library
 License:        LGPLv2 or EPL
 URL:            http://logback.qos.ch/
@@ -184,6 +184,9 @@ cp -r %{name}-examples/pom.xml %{name}-examples/src %{buildroot}%{_datadir}/%{na
 %{_datadir}/%{name}
 
 %changelog
+* Thu Feb 04 2016 Fedora Release Engineering <releng@fedoraproject.org> - 1.1.3-2
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_24_Mass_Rebuild
+
 * Fri Aug 07 2015 gil cattaneo <puntogil@libero.it> 1.1.3-1
 - Update to 1.1.3
 - Use glassfish-servlet-apis instead of tomcat-servlet-api
