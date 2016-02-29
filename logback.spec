@@ -7,13 +7,13 @@ Release:        1%{?dist}
 Summary:        A Java logging library
 License:        LGPLv2 or EPL
 URL:            http://logback.qos.ch/
-Source0:        http://logback.qos.ch/dist/logback-%{version}.tar.gz
+Source0:        http://logback.qos.ch/dist/%{name}-%{version}.tar.gz
 
 # servlet 3.1 support
 Patch0:         %{name}-1.1.2-servlet.patch
 # Remove deprecate methods
 Patch1:         %{name}-1.1.5-jetty9.3.0.patch
-Patch2:         %{name}-1.1.3-tomcat.patch
+Patch2:         %{name}-1.1.5-tomcat.patch
 # use antrun-plugin instead of gmavenplus-plugin
 Patch3:         %{name}-1.1.3-antrun-plugin.patch
 
