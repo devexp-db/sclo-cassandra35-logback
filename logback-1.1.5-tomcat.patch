@@ -1,0 +1,15 @@
+diff -Nru logback-1.1.5/logback-access/src/main/java/ch/qos/logback/access/tomcat/LogbackValve.java logback-1.1.5.tomcat/logback-access/src/main/java/ch/qos/logback/access/tomcat/LogbackValve.java
+--- logback-1.1.5/logback-access/src/main/java/ch/qos/logback/access/tomcat/LogbackValve.java	2016-02-12 22:52:15.000000000 +0100
++++ logback-1.1.5.tomcat/logback-access/src/main/java/ch/qos/logback/access/tomcat/LogbackValve.java	2016-02-29 15:13:55.288570692 +0100
+@@ -252,11 +252,6 @@
+     return aai.detachAppender(name);
+   }
+ 
+-  @Override
+-  public String getInfo() {
+-    return "Logback's implementation of ValveBase";
+-  }
+-
+   // Methods from ContextBase:
+   @Override
+   public StatusManager getStatusManager() {
