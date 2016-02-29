@@ -2,17 +2,17 @@
 %bcond_with gmavenplus
 
 Name:           logback
-Version:        1.1.3
-Release:        2%{?dist}
+Version:        1.1.5
+Release:        1%{?dist}
 Summary:        A Java logging library
 License:        LGPLv2 or EPL
 URL:            http://logback.qos.ch/
-Source0:        http://logback.qos.ch/dist/%{name}-%{version}.tar.gz
+Source0:        http://logback.qos.ch/dist/logback-%{version}.tar.gz
 
 # servlet 3.1 support
 Patch0:         %{name}-1.1.2-servlet.patch
 # Remove deprecate methods
-Patch1:         %{name}-1.1.3-jetty9.3.0.patch
+Patch1:         %{name}-1.1.5-jetty9.3.0.patch
 Patch2:         %{name}-1.1.3-tomcat.patch
 # use antrun-plugin instead of gmavenplus-plugin
 Patch3:         %{name}-1.1.3-antrun-plugin.patch
@@ -56,16 +56,15 @@ BuildRequires: mvn(mysql:mysql-connector-java:5.1.9)
 BuildRequires: mvn(postgresql:postgresql:8.4-701.jdbc4)
 BuildRequires: mvn(org.easytesting:fest-assert:1.2)
 BuildRequires: mvn(org.mockito:mockito-core:1.9.0)
-BuildRequires: mvn(org.slf4j:integration:1.7.5)
-BuildRequires: mvn(org.slf4j:jul-to-slf4j:1.7.5)
-BuildRequires: mvn(org.slf4j:log4j-over-slf4j:1.7.5)
-BuildRequires: mvn(org.slf4j:slf4j-api:1.7.5:test-jar)
-BuildRequires: mvn(org.slf4j:slf4j-ext:1.7.5)
+BuildRequires: mvn(org.slf4j:integration:1.7.16)
+BuildRequires: mvn(org.slf4j:jul-to-slf4j:1.7.16)
+BuildRequires: mvn(org.slf4j:log4j-over-slf4j:1.7.16)
+BuildRequires: mvn(org.slf4j:slf4j-api:1.7.16:test-jar)
+BuildRequires: mvn(org.slf4j:slf4j-ext:1.7.16)
 BuildRequires: mvn(com.icegreen:greenmail:1.3)
 BuildRequires: mvn(org.subethamail:subethasmtp:2.1.0)
-# mvn(ch.qos.logback:logback-core:%%{version}:test-jar)
 %endif
-# BuildRequires: maven-plugin-build-helper
+
 BuildArch:     noarch
 
 %description
@@ -121,6 +120,7 @@ find . -name "*.jar" -delete
 %pom_remove_plugin :maven-source-plugin
 %pom_remove_plugin :findbugs-maven-plugin
 %pom_remove_plugin -r :maven-dependency-plugin
+%pom_remove_plugin -r :cobertura-maven-plugin
 
 # Clean up the documentation
 sed -i 's/\r//' LICENSE.txt README.txt docs/*.* docs/*/*.* docs/*/*/*.*
@@ -160,7 +160,7 @@ rm -r %{name}-*/src/test/java/*
 # unavailable test dep maven-scala-plugin
 # slf4jJAR and org.apache.felix.main are required by logback-examples modules for maven-antrun-plugin
 %mvn_build -f -- \
-  -Dslf4jJAR=$(build-classpath slf4j/api) \
+  -Dorg.slf4j:slf4j-api:jar=$(build-classpath slf4j/api) \
   -Dorg.apache.felix:org.apache.felix.main:jar=$(build-classpath felix/org.apache.felix.main)
 
 %install
@@ -184,6 +184,9 @@ cp -r %{name}-examples/pom.xml %{name}-examples/src %{buildroot}%{_datadir}/%{na
 %{_datadir}/%{name}
 
 %changelog
+* Mon Feb 29 2016 gil cattaneo <puntogil@libero.it> 1.1.5-1
+- Update to 1.1.5
+
 * Thu Feb 04 2016 Fedora Release Engineering <releng@fedoraproject.org> - 1.1.3-2
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_24_Mass_Rebuild
 
