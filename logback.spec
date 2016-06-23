@@ -1,8 +1,5 @@
-# https://bugzilla.redhat.com/show_bug.cgi?id=1208381
-%bcond_with gmavenplus
-
 Name:           logback
-Version:        1.1.5
+Version:        1.1.7
 Release:        1%{?dist}
 Summary:        A Java logging library
 License:        LGPLv2 or EPL
@@ -10,12 +7,10 @@ URL:            http://logback.qos.ch/
 Source0:        http://logback.qos.ch/dist/%{name}-%{version}.tar.gz
 
 # servlet 3.1 support
-Patch0:         %{name}-1.1.2-servlet.patch
+Patch0:         %{name}-1.1.7-servlet.patch
 # Remove deprecate methods
-Patch1:         %{name}-1.1.5-jetty9.3.0.patch
-Patch2:         %{name}-1.1.5-tomcat.patch
-# use antrun-plugin instead of gmavenplus-plugin
-Patch3:         %{name}-1.1.3-antrun-plugin.patch
+Patch1:         %{name}-1.1.7-jetty.patch
+Patch2:         %{name}-1.1.7-tomcat.patch
 
 BuildRequires: java-devel >= 1:1.6.0
 BuildRequires: maven-local
@@ -30,9 +25,7 @@ BuildRequires: mvn(org.apache.geronimo.specs:geronimo-jms_1.1_spec)
 BuildRequires: mvn(org.apache.maven.plugins:maven-antrun-plugin)
 BuildRequires: mvn(org.apache.tomcat:tomcat-catalina)
 BuildRequires: mvn(org.apache.tomcat:tomcat-coyote)
-%if %{with gmavenplus}
 BuildRequires: mvn(org.codehaus.gmavenplus:gmavenplus-plugin)
-%endif
 BuildRequires: mvn(org.codehaus.groovy:groovy-all)
 BuildRequires: mvn(org.codehaus.janino:janino)
 BuildRequires: mvn(org.eclipse.jetty:jetty-server)
@@ -112,10 +105,6 @@ find . -name "*.jar" -delete
 %patch0 -p1
 %patch1 -p1
 %patch2 -p1
-%if %{without gmavenplus}
-%patch3 -p1
-%pom_remove_plugin -r :gmavenplus-plugin
-%endif
 
 %pom_remove_plugin :maven-source-plugin
 %pom_remove_plugin :findbugs-maven-plugin
@@ -152,6 +141,20 @@ rm -r %{name}-*/src/test/java/*
 
 %pom_xpath_remove "pom:build/pom:extensions"
 
+# Use not available org.codehaus.groovy:groovy-eclipse-compiler:2.9.1-01, org.codehaus.groovy:groovy-eclipse-batch:2.3.7-01
+%pom_remove_plugin :maven-compiler-plugin logback-classic
+%pom_add_plugin org.codehaus.gmavenplus:gmavenplus-plugin:1.5 logback-classic "
+ <executions>
+  <execution>
+   <goals>
+    <goal>generateStubs</goal>
+    <goal>testGenerateStubs</goal>
+    <!--goal>compile</goal>
+    <goal>testCompile</goal-->
+   </goals>
+  </execution>
+ </executions>"
+
 %mvn_package ":%{name}-access" access
 %mvn_package ":%{name}-examples" examples
 
@@ -184,6 +187,9 @@ cp -r %{name}-examples/pom.xml %{name}-examples/src %{buildroot}%{_datadir}/%{na
 %{_datadir}/%{name}
 
 %changelog
+* Thu Jun 23 2016 gil cattaneo <puntogil@libero.it> 1.1.7-1
+- update to 1.1.7
+
 * Mon Feb 29 2016 gil cattaneo <puntogil@libero.it> 1.1.5-1
 - Update to 1.1.5
 
