@@ -1,0 +1,141 @@
+diff -ur logback-1.1.7/logback-classic/src/main/java/ch/qos/logback/classic/boolex/GEventEvaluator.java logback-1.1.7new/logback-classic/src/main/java/ch/qos/logback/classic/boolex/GEventEvaluator.java
+--- logback-1.1.7/logback-classic/src/main/java/ch/qos/logback/classic/boolex/GEventEvaluator.java	2016-02-25 22:15:38.000000000 +0100
++++ logback-1.1.7new/logback-classic/src/main/java/ch/qos/logback/classic/boolex/GEventEvaluator.java	2016-09-30 08:02:31.455533434 +0200
+@@ -17,8 +17,8 @@
+ import ch.qos.logback.core.boolex.EvaluationException;
+ import ch.qos.logback.core.boolex.EventEvaluatorBase;
+ import ch.qos.logback.core.util.FileUtil;
+-import groovy.lang.*;
+-import org.codehaus.groovy.control.CompilationFailedException;
++//import groovy.lang.*;
++//import org.codehaus.groovy.control.CompilationFailedException;
+ 
+ /**
+  * @author Ceki G&uuml;lc&uuml;
+@@ -28,7 +28,7 @@
+     String expression;
+ 
+     IEvaluator delegateEvaluator;
+-    Script script;
++//    Script script;
+ 
+     public String getExpression() {
+         return expression;
+@@ -51,14 +51,14 @@
+         String currentPackageName = this.getClass().getPackage().getName();
+         currentPackageName = currentPackageName.replace('.', '/');
+ 
+-        FileUtil fileUtil = new FileUtil(getContext());
++       /* FileUtil fileUtil = new FileUtil(getContext());
+         String scriptText = fileUtil.resourceAsString(classLoader, currentPackageName + "/EvaluatorTemplate.groovy");
+-        if (scriptText == null) {
++        if (scriptText == null) {*/
+             return;
+-        }
++       // }
+ 
+         // insert the expression into script text
+-        scriptText = scriptText.replace("//EXPRESSION", expression);
++      /*  scriptText = scriptText.replace("//EXPRESSION", expression);
+ 
+         GroovyClassLoader gLoader = new GroovyClassLoader(classLoader);
+         try {
+@@ -75,7 +75,7 @@
+             errors++;
+         }
+         if (errors == 0)
+-            super.start();
++            super.start();*/
+     }
+ 
+     public boolean evaluate(ILoggingEvent event) throws NullPointerException, EvaluationException {
+diff -ur logback-1.1.7/logback-classic/src/main/java/ch/qos/logback/classic/joran/ReconfigureOnChangeTask.java logback-1.1.7new/logback-classic/src/main/java/ch/qos/logback/classic/joran/ReconfigureOnChangeTask.java
+--- logback-1.1.7/logback-classic/src/main/java/ch/qos/logback/classic/joran/ReconfigureOnChangeTask.java	2016-03-17 18:50:37.000000000 +0100
++++ logback-1.1.7new/logback-classic/src/main/java/ch/qos/logback/classic/joran/ReconfigureOnChangeTask.java	2016-09-30 07:50:31.659953280 +0200
+@@ -6,7 +6,7 @@
+ import java.util.List;
+ 
+ import ch.qos.logback.classic.LoggerContext;
+-import ch.qos.logback.classic.gaffer.GafferUtil;
++//import ch.qos.logback.classic.gaffer.GafferUtil;
+ import ch.qos.logback.classic.util.EnvUtil;
+ import ch.qos.logback.core.CoreConstants;
+ import ch.qos.logback.core.joran.event.SaxEvent;
+@@ -64,14 +64,14 @@
+         if (mainConfigurationURL.toString().endsWith("xml")) {
+             performXMLConfiguration(lc, mainConfigurationURL);
+         } else if (mainConfigurationURL.toString().endsWith("groovy")) {
+-            if (EnvUtil.isGroovyAvailable()) {
++            /*if (EnvUtil.isGroovyAvailable()) {
+                 lc.reset();
+                 // avoid directly referring to GafferConfigurator so as to avoid
+                 // loading groovy.lang.GroovyObject . See also http://jira.qos.ch/browse/LBCLASSIC-214
+                 GafferUtil.runGafferConfiguratorOn(lc, this, mainConfigurationURL);
+-            } else {
++            } else {*/
+                 addError("Groovy classes are not available on the class path. ABORTING INITIALIZATION.");
+-            }
++            //}
+         }
+         fireDoneReconfiguring();
+     }
+diff -ur logback-1.1.7/logback-classic/src/main/java/ch/qos/logback/classic/turbo/ReconfigureOnChangeFilter.java logback-1.1.7new/logback-classic/src/main/java/ch/qos/logback/classic/turbo/ReconfigureOnChangeFilter.java
+--- logback-1.1.7/logback-classic/src/main/java/ch/qos/logback/classic/turbo/ReconfigureOnChangeFilter.java	2016-03-11 15:48:02.000000000 +0100
++++ logback-1.1.7new/logback-classic/src/main/java/ch/qos/logback/classic/turbo/ReconfigureOnChangeFilter.java	2016-09-30 07:48:07.644972203 +0200
+@@ -17,7 +17,7 @@
+ import java.net.URL;
+ import java.util.List;
+ 
+-import ch.qos.logback.classic.gaffer.GafferUtil;
++//import ch.qos.logback.classic.gaffer.GafferUtil;
+ import ch.qos.logback.classic.util.EnvUtil;
+ import ch.qos.logback.core.CoreConstants;
+ import ch.qos.logback.core.joran.event.SaxEvent;
+@@ -187,14 +187,14 @@
+             if (mainConfigurationURL.toString().endsWith("xml")) {
+                 performXMLConfiguration(lc);
+             } else if (mainConfigurationURL.toString().endsWith("groovy")) {
+-                if (EnvUtil.isGroovyAvailable()) {
++                /*if (EnvUtil.isGroovyAvailable()) {
+                     lc.reset();
+                     // avoid directly referring to GafferConfigurator so as to avoid
+                     // loading groovy.lang.GroovyObject . See also http://jira.qos.ch/browse/LBCLASSIC-214
+                     GafferUtil.runGafferConfiguratorOn(lc, this, mainConfigurationURL);
+-                } else {
++                } else {*/
+                     addError("Groovy classes are not available on the class path. ABORTING INITIALIZATION.");
+-                }
++                //}
+             }
+         }
+ 
+diff -ur logback-1.1.7/logback-classic/src/main/java/ch/qos/logback/classic/util/ContextInitializer.java logback-1.1.7new/logback-classic/src/main/java/ch/qos/logback/classic/util/ContextInitializer.java
+--- logback-1.1.7/logback-classic/src/main/java/ch/qos/logback/classic/util/ContextInitializer.java	2016-02-29 20:51:06.000000000 +0100
++++ logback-1.1.7new/logback-classic/src/main/java/ch/qos/logback/classic/util/ContextInitializer.java	2016-09-30 07:54:31.645432726 +0200
+@@ -21,7 +21,7 @@
+ 
+ import ch.qos.logback.classic.BasicConfigurator;
+ import ch.qos.logback.classic.LoggerContext;
+-import ch.qos.logback.classic.gaffer.GafferUtil;
++//import ch.qos.logback.classic.gaffer.GafferUtil;
+ import ch.qos.logback.classic.joran.JoranConfigurator;
+ import ch.qos.logback.classic.spi.Configurator;
+ import ch.qos.logback.core.LogbackException;
+@@ -61,14 +61,14 @@
+         }
+         final String urlString = url.toString();
+         if (urlString.endsWith("groovy")) {
+-            if (EnvUtil.isGroovyAvailable()) {
++            /*if (EnvUtil.isGroovyAvailable()) {
+                 // avoid directly referring to GafferConfigurator so as to avoid
+                 // loading groovy.lang.GroovyObject . See also http://jira.qos.ch/browse/LBCLASSIC-214
+                 GafferUtil.runGafferConfiguratorOn(loggerContext, this, url);
+-            } else {
++            } else {*/
+                 StatusManager sm = loggerContext.getStatusManager();
+                 sm.add(new ErrorStatus("Groovy classes are not available on the class path. ABORTING INITIALIZATION.", loggerContext));
+-            }
++            //}
+         } else if (urlString.endsWith("xml")) {
+             JoranConfigurator configurator = new JoranConfigurator();
+             configurator.setContext(loggerContext);

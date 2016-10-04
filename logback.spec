@@ -1,61 +1,67 @@
-Name:           logback
+%{?scl:%scl_package logback}
+%{!?scl:%global pkg_name %{name}}
+
+Name:           %{?scl_prefix}logback
 Version:        1.1.7
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        A Java logging library
 License:        LGPLv2 or EPL
 URL:            http://logback.qos.ch/
-Source0:        http://logback.qos.ch/dist/%{name}-%{version}.tar.gz
+Source0:        http://%{pkg_name}.qos.ch/dist/%{pkg_name}-%{version}.tar.gz
 
 # servlet 3.1 support
-Patch0:         %{name}-1.1.7-servlet.patch
+Patch0:         %{pkg_name}-1.1.7-servlet.patch
 # Remove deprecate methods
-Patch1:         %{name}-1.1.7-jetty.patch
-Patch2:         %{name}-1.1.7-tomcat.patch
+Patch1:         %{pkg_name}-1.1.7-jetty.patch
+Patch2:         %{pkg_name}-1.1.7-tomcat.patch
+# Remove groovy for scl package
+Patch3:         %{pkg_name}-1.1.7-removeGroovy.patch
 
-BuildRequires: java-devel >= 1:1.6.0
-BuildRequires: maven-local
-BuildRequires: mvn(javax.mail:mail)
-BuildRequires: mvn(javax.servlet:javax.servlet-api)
-BuildRequires: mvn(junit:junit)
-BuildRequires: mvn(log4j:log4j:1.2.17)
-BuildRequires: mvn(org.apache.ant:ant-junit)
-BuildRequires: mvn(org.apache.felix:maven-bundle-plugin)
-BuildRequires: mvn(org.apache.felix:org.apache.felix.main)
-BuildRequires: mvn(org.apache.geronimo.specs:geronimo-jms_1.1_spec)
-BuildRequires: mvn(org.apache.maven.plugins:maven-antrun-plugin)
-BuildRequires: mvn(org.apache.tomcat:tomcat-catalina)
-BuildRequires: mvn(org.apache.tomcat:tomcat-coyote)
-BuildRequires: mvn(org.codehaus.gmavenplus:gmavenplus-plugin)
-BuildRequires: mvn(org.codehaus.groovy:groovy-all)
-BuildRequires: mvn(org.codehaus.janino:janino)
-BuildRequires: mvn(org.eclipse.jetty:jetty-server)
-BuildRequires: mvn(org.eclipse.jetty:jetty-util)
-BuildRequires: mvn(org.fusesource:fusesource-pom:pom:)
-BuildRequires: mvn(org.fusesource.jansi:jansi)
-BuildRequires: mvn(org.slf4j:slf4j-api)
-BuildRequires: mvn(org.slf4j:slf4j-ext)
+BuildRequires:  java-devel >= 1:1.6.0
+BuildRequires:  maven-local
+BuildRequires:  mvn(javax.mail:mail)
+BuildRequires:  mvn(javax.servlet:javax.servlet-api)
+BuildRequires:  mvn(junit:junit)
+BuildRequires:  %{?scl_java_prefix}log4j >= 1.2.17
+BuildRequires:  %{?scl_java_prefix}ant-junit
+BuildRequires:  mvn(org.apache.felix:maven-bundle-plugin)
+BuildRequires:  mvn(org.apache.geronimo.specs:geronimo-jms_1.1_spec)
+BuildRequires:  mvn(org.apache.maven.plugins:maven-antrun-plugin)
+BuildRequires:  mvn(org.apache.tomcat:tomcat-catalina)
+BuildRequires:  mvn(org.apache.tomcat:tomcat-coyote)
+# use Groovy only in non-SCL package
+%{!?scl:BuildRequires:  mvn(org.codehaus.groovy:groovy-all)
+BuildRequires:  mvn(org.slf4j:slf4j-ext)
+BuildRequires:  mvn(org.codehaus.gmavenplus:gmavenplus-plugin)}
+BuildRequires:  %{?scl_prefix}janino
+BuildRequires:  mvn(org.eclipse.jetty:jetty-server)
+BuildRequires:  mvn(org.eclipse.jetty:jetty-util)
+BuildRequires:  mvn(org.fusesource:fusesource-pom:pom:)
+BuildRequires:  %{?scl_java_prefix}jansi
+BuildRequires:  %{?scl_prefix}slf4j
 # groovy-all embedded libraries
-BuildRequires: mvn(antlr:antlr)
-BuildRequires: mvn(commons-cli:commons-cli)
-BuildRequires: mvn(org.ow2.asm:asm-all)
-BuildRequires: mvn(org.slf4j:slf4j-nop)
+BuildRequires:  mvn(antlr:antlr)
+BuildRequires:  mvn(commons-cli:commons-cli)
+BuildRequires:  mvn(org.ow2.asm:asm-all)
+BuildRequires:  mvn(org.slf4j:slf4j-nop)
+%{?scl:Requires: %scl_runtime}
 
 # test deps
 %if 0
-BuildRequires: mvn(com.h2database:h2:1.2.132)
-BuildRequires: mvn(dom4j:dom4j:1.6.1)
-BuildRequires: mvn(hsqldb:hsqldb:1.8.0.7)
-BuildRequires: mvn(mysql:mysql-connector-java:5.1.9)
-BuildRequires: mvn(postgresql:postgresql:8.4-701.jdbc4)
-BuildRequires: mvn(org.easytesting:fest-assert:1.2)
-BuildRequires: mvn(org.mockito:mockito-core:1.9.0)
-BuildRequires: mvn(org.slf4j:integration:1.7.16)
-BuildRequires: mvn(org.slf4j:jul-to-slf4j:1.7.16)
-BuildRequires: mvn(org.slf4j:log4j-over-slf4j:1.7.16)
-BuildRequires: mvn(org.slf4j:slf4j-api:1.7.16:test-jar)
-BuildRequires: mvn(org.slf4j:slf4j-ext:1.7.16)
-BuildRequires: mvn(com.icegreen:greenmail:1.3)
-BuildRequires: mvn(org.subethamail:subethasmtp:2.1.0)
+BuildRequires:  mvn(com.h2database:h2:1.2.132)
+BuildRequires:  mvn(dom4j:dom4j:1.6.1)
+BuildRequires:  mvn(hsqldb:hsqldb:1.8.0.7)
+BuildRequires:  mvn(mysql:mysql-connector-java:5.1.9)
+BuildRequires:  mvn(postgresql:postgresql:8.4-701.jdbc4)
+BuildRequires:  mvn(org.easytesting:fest-assert:1.2)
+BuildRequires:  mvn(org.mockito:mockito-core:1.9.0)
+BuildRequires:  mvn(org.slf4j:integration:1.7.16)
+BuildRequires:  mvn(org.slf4j:jul-to-slf4j:1.7.16)
+BuildRequires:  mvn(org.slf4j:log4j-over-slf4j:1.7.16)
+BuildRequires:  mvn(org.slf4j:slf4j-api:1.7.16:test-jar)
+BuildRequires:  mvn(org.slf4j:slf4j-ext:1.7.16)
+BuildRequires:  mvn(com.icegreen:greenmail:1.3)
+BuildRequires:  mvn(org.subethamail:subethasmtp:2.1.0)
 %endif
 
 BuildArch:     noarch
@@ -81,22 +87,23 @@ Summary:       Javadoc for %{name}
 %description javadoc
 API documentation for the Logback library
 
-%package access
+# don't include these two subpackages in SCL package
+%{!?scl:%package access
 Summary:       Logback-access module for Servlet integration
 
 %description access
 The logback-access module integrates with Servlet containers, such as Tomcat
-and Jetty, to provide HTTP-access log functionality. Note that you could
-easily build your own module on top of logback-core. 
+and Jetty, to provide HTTP-access log functionality. Note that you could easily
+build your own module on top of logback-core.
 
 %package examples
 Summary:       Logback Examples Module
 
 %description examples
-logback-examples module.
+logback-examples module.}
 
 %prep
-%setup -q
+%setup -q -n %{pkg_name}-%{version}
 # Clean up
 find . -name "*.class" -delete
 find . -name "*.cmd" -delete
@@ -105,7 +112,10 @@ find . -name "*.jar" -delete
 %patch0 -p1
 %patch1 -p1
 %patch2 -p1
+# remove groovy in scl package
+%{?scl:%patch3 -p1}
 
+%{?scl_enable}
 %pom_remove_plugin :maven-source-plugin
 %pom_remove_plugin :findbugs-maven-plugin
 %pom_remove_plugin -r :maven-dependency-plugin
@@ -113,15 +123,15 @@ find . -name "*.jar" -delete
 
 # Clean up the documentation
 sed -i 's/\r//' LICENSE.txt README.txt docs/*.* docs/*/*.* docs/*/*/*.*
-sed -i 's#"apidocs#"%{_javadocdir}/%{name}#g' docs/*.html
+sed -i 's#"apidocs#"%{_javadocdir}/%{pkg_name}#g' docs/*.html
 rm -rf docs/apidocs docs/project-reports docs/testapidocs docs/project-reports.html
 rm -f docs/manual/.htaccess docs/css/site.css # Zero-length file
 
 # Force servlet 3.1 apis
 %pom_change_dep -r :servlet-api javax.servlet:javax.servlet-api:3.1.0
-sed -i 's#javax.servlet.*;version="2.5"#javax.servlet.*;version="3.1"#' %{name}-access/pom.xml
+sed -i 's#javax.servlet.*;version="2.5"#javax.servlet.*;version="3.1"#' %{pkg_name}-access/pom.xml
 
-rm -r %{name}-*/src/test/java/*
+rm -r %{pkg_name}-*/src/test/java/*
 # remove test deps
 # ch.qos.logback:logback-core:test-jar
 %pom_xpath_remove -r "pom:dependency[pom:type = 'test-jar']"
@@ -131,19 +141,22 @@ rm -r %{name}-*/src/test/java/*
 %pom_xpath_remove -r "pom:plugin[pom:artifactId = 'maven-jar-plugin']/pom:executions"
 
 # com.oracle:ojdbc14:10.2.0.1 com.microsoft.sqlserver:sqljdbc4:2.0
-%pom_xpath_remove "pom:project/pom:profiles/pom:profile[pom:id = 'host-orion']" %{name}-access
-%pom_xpath_remove "pom:project/pom:profiles" %{name}-classic
+%pom_xpath_remove "pom:project/pom:profiles/pom:profile[pom:id = 'host-orion']" %{pkg_name}-access
+%pom_xpath_remove "pom:project/pom:profiles" %{pkg_name}-classic
 
 %pom_xpath_remove "pom:project/pom:profiles/pom:profile[pom:id = 'javadocjar']"
 
 # disable for now
 %pom_disable_module logback-site
+# disable for SCL package
+%{?scl:%pom_disable_module logback-access
+%pom_disable_module logback-examples}
 
 %pom_xpath_remove "pom:build/pom:extensions"
 
 # Use not available org.codehaus.groovy:groovy-eclipse-compiler:2.9.1-01, org.codehaus.groovy:groovy-eclipse-batch:2.3.7-01
 %pom_remove_plugin :maven-compiler-plugin logback-classic
-%pom_add_plugin org.codehaus.gmavenplus:gmavenplus-plugin:1.5 logback-classic "
+%{!?scl:%pom_add_plugin org.codehaus.gmavenplus:gmavenplus-plugin:1.5 logback-classic "
  <executions>
   <execution>
    <goals>
@@ -153,24 +166,35 @@ rm -r %{name}-*/src/test/java/*
     <goal>testCompile</goal-->
    </goals>
   </execution>
- </executions>"
+ </executions>"}
 
-%mvn_package ":%{name}-access" access
-%mvn_package ":%{name}-examples" examples
+# these modules are not needed for SCL package
+%{!?scl:%mvn_package ":%{pkg_name}-access" access
+%mvn_package ":%{pkg_name}-examples" examples}
+
+# remove Groovy from SCL package
+%{?scl:%pom_remove_dep org.codehaus.groovy:groovy-all logback-classic
+rm -f logback-classic/src/main/java/ch/qos/logback/classic/gaffer/GafferUtil.java}
+%{?scl_disable}
 
 %build
 
 # unavailable test dep maven-scala-plugin
 # slf4jJAR and org.apache.felix.main are required by logback-examples modules for maven-antrun-plugin
+%{?scl_enable}
 %mvn_build -f -- \
   -Dorg.slf4j:slf4j-api:jar=$(build-classpath slf4j/api) \
   -Dorg.apache.felix:org.apache.felix.main:jar=$(build-classpath felix/org.apache.felix.main)
+%{?scl_disable}
 
 %install
+%{?scl_enable}
 %mvn_install
+%{?scl_disable}
 
-install -d -m 755 %{buildroot}%{_datadir}/%{name}/examples
-cp -r %{name}-examples/pom.xml %{name}-examples/src %{buildroot}%{_datadir}/%{name}/examples
+# files installed only in non-scl package
+%{!?scl:install -d -m 755 %{buildroot}%{_datadir}/%{pkg_name}/examples
+cp -r %{pkg_name}-examples/pom.xml %{pkg_name}-examples/src %{buildroot}%{_datadir}/%{pkg_name}/examples}
 
 %files -f .mfiles
 %doc README.txt docs/*
@@ -179,14 +203,18 @@ cp -r %{name}-examples/pom.xml %{name}-examples/src %{buildroot}%{_datadir}/%{na
 %files javadoc -f .mfiles-javadoc
 %license LICENSE.txt
 
-%files access -f .mfiles-access
+# subpackages installed only in non-scl package
+%{!?scl:%files access -f .mfiles-access
 %license LICENSE.txt
 
 %files examples -f .mfiles-examples
 %license LICENSE.txt
-%{_datadir}/%{name}
+%{_datadir}/%{pkg_name}}
 
 %changelog
+* Mon Sep 26 2016 Tomas Repik <trepik@redhat.com> - 1.1.7-2
+- scl conversion
+
 * Thu Jun 23 2016 gil cattaneo <puntogil@libero.it> 1.1.7-1
 - update to 1.1.7
 
