@@ -3,7 +3,7 @@
 
 Name:           %{?scl_prefix}logback
 Version:        1.1.7
-Release:        2%{?dist}
+Release:        3%{?dist}
 Summary:        A Java logging library
 License:        LGPLv2 or EPL
 URL:            http://logback.qos.ch/
@@ -17,33 +17,24 @@ Patch2:         %{pkg_name}-1.1.7-tomcat.patch
 # Remove groovy for scl package
 Patch3:         %{pkg_name}-1.1.7-removeGroovy.patch
 
-BuildRequires:  java-devel >= 1:1.6.0
-BuildRequires:  maven-local
-BuildRequires:  mvn(javax.mail:mail)
-BuildRequires:  mvn(javax.servlet:javax.servlet-api)
-BuildRequires:  mvn(junit:junit)
-BuildRequires:  %{?scl_java_prefix}log4j >= 1.2.17
-BuildRequires:  %{?scl_java_prefix}ant-junit
-BuildRequires:  mvn(org.apache.felix:maven-bundle-plugin)
-BuildRequires:  mvn(org.apache.geronimo.specs:geronimo-jms_1.1_spec)
-BuildRequires:  mvn(org.apache.maven.plugins:maven-antrun-plugin)
+BuildRequires:  %{?scl_prefix_maven}maven-local
+BuildRequires:  %{?scl_prefix_maven}maven-plugin-bundle
+BuildRequires:  %{?scl_prefix_maven}geronimo-jms
+BuildRequires:  %{?scl_prefix_maven}maven-antrun-plugin
+BuildRequires:  %{?scl_prefix_java_common}log4j >= 1.2.17
+BuildRequires:  %{?scl_prefix_java_common}ant-junit
+BuildRequires:  %{?scl_prefix_java_common}jansi
+BuildRequires:  %{?scl_prefix_java_common}javamail
+BuildRequires:  %{?scl_prefix_java_common}jetty-server
+BuildRequires:  %{?scl_prefix_java_common}jetty-util
+BuildRequires:  %{?scl_prefix}janino
+BuildRequires:  %{?scl_prefix}slf4j
 BuildRequires:  mvn(org.apache.tomcat:tomcat-catalina)
 BuildRequires:  mvn(org.apache.tomcat:tomcat-coyote)
 # use Groovy only in non-SCL package
 %{!?scl:BuildRequires:  mvn(org.codehaus.groovy:groovy-all)
 BuildRequires:  mvn(org.slf4j:slf4j-ext)
 BuildRequires:  mvn(org.codehaus.gmavenplus:gmavenplus-plugin)}
-BuildRequires:  %{?scl_prefix}janino
-BuildRequires:  mvn(org.eclipse.jetty:jetty-server)
-BuildRequires:  mvn(org.eclipse.jetty:jetty-util)
-BuildRequires:  mvn(org.fusesource:fusesource-pom:pom:)
-BuildRequires:  %{?scl_java_prefix}jansi
-BuildRequires:  %{?scl_prefix}slf4j
-# groovy-all embedded libraries
-BuildRequires:  mvn(antlr:antlr)
-BuildRequires:  mvn(commons-cli:commons-cli)
-BuildRequires:  mvn(org.ow2.asm:asm-all)
-BuildRequires:  mvn(org.slf4j:slf4j-nop)
 %{?scl:Requires: %scl_runtime}
 
 # test deps
@@ -115,7 +106,7 @@ find . -name "*.jar" -delete
 # remove groovy in scl package
 %{?scl:%patch3 -p1}
 
-%{?scl_enable}
+%{?scl:scl enable %{scl_maven} %{scl} - << "EOF"}
 %pom_remove_plugin :maven-source-plugin
 %pom_remove_plugin :findbugs-maven-plugin
 %pom_remove_plugin -r :maven-dependency-plugin
@@ -175,22 +166,22 @@ rm -r %{pkg_name}-*/src/test/java/*
 # remove Groovy from SCL package
 %{?scl:%pom_remove_dep org.codehaus.groovy:groovy-all logback-classic
 rm -f logback-classic/src/main/java/ch/qos/logback/classic/gaffer/GafferUtil.java}
-%{?scl_disable}
+%{?scl:EOF}
 
 %build
 
+%{?scl:scl enable %{scl_maven} %{scl} - << "EOF"}
 # unavailable test dep maven-scala-plugin
 # slf4jJAR and org.apache.felix.main are required by logback-examples modules for maven-antrun-plugin
-%{?scl_enable}
 %mvn_build -f -- \
   -Dorg.slf4j:slf4j-api:jar=$(build-classpath slf4j/api) \
   -Dorg.apache.felix:org.apache.felix.main:jar=$(build-classpath felix/org.apache.felix.main)
-%{?scl_disable}
+%{?scl:EOF}
 
 %install
-%{?scl_enable}
+%{?scl:scl enable %{scl_maven} %{scl} - << "EOF"}
 %mvn_install
-%{?scl_disable}
+%{?scl:EOF}
 
 # files installed only in non-scl package
 %{!?scl:install -d -m 755 %{buildroot}%{_datadir}/%{pkg_name}/examples
@@ -212,6 +203,9 @@ cp -r %{pkg_name}-examples/pom.xml %{pkg_name}-examples/src %{buildroot}%{_datad
 %{_datadir}/%{pkg_name}}
 
 %changelog
+* Wed Oct 12 2016 Tomas Repik <trepik@redhat.com> - 1.1.7-3
+- use standard SCL macros
+
 * Mon Sep 26 2016 Tomas Repik <trepik@redhat.com> - 1.1.7-2
 - scl conversion
 
